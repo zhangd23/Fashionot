@@ -1,0 +1,3 @@
+#goals:
+
+1)  aggregate data
