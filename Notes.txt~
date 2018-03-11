@@ -7,6 +7,3 @@ store data in ./rawimages folder.
 looks like icrawler won run correctly unstill libxml is installed. 
 http://icrawler.readthedocs.io/en/latest/install.html
 http://lxml.de/installation.html#requirements
-
-sudo apt-get install libxml2-dev libxslt-dev python-dev
-sudo pip install lxml
