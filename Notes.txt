@@ -1,5 +1,11 @@
 #goals:
 
+3/19/18 - AR
+#1 test if matrix generator works with our cost function code
+#2 setup fminc for our code and train our neural net
+#3 visualize our classificaitons 
+#4 validate model. larger data set. split into training/cross-validation/etc. 
+
 1)  aggregate data
 use icrawler to crawl google images. 
 store data in ./rawimages folder. 
