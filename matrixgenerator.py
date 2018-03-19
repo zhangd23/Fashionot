@@ -8,7 +8,7 @@ import numpy as np
     
 def generateMatrices():
     X = np.empty((0,30000), 'uint8')
-    Y = np.empty((0),'uint8')	
+    Y = np.empty((0,1),'uint8')	
     #for all images in folder 1    
     
         # Root directory 
@@ -25,7 +25,7 @@ def generateMatrices():
     if not os.path.exists(folder2):
         os.makedirs(folder2)
         
-    tmplabel = 1 #folder 1 is positive examples
+    tmplabel = np.ones([1,1]) #folder 1 is positive examples
     for imagefilename in os.listdir(folder1):
       #load image
       image = io.imread(os.path.join(folder1,imagefilename))
@@ -34,12 +34,12 @@ def generateMatrices():
       datarow = np.reshape(image, (1,-1)) # make a 1 x m matrix where m is however many pixels
                                 # there are in the image
       X=np.append(X,datarow,axis=0)
-      Y=np.append(Y,np.array([tmplabel]),axis=0)
+      Y=np.append(Y,tmplabel,axis=0)
     
     
     
     #repeat for folder2
-    tmplabel = 0 #folder 2 is negative examples
+    tmplabel = np.zeros([1,1]) #folder 2 is negative examples
     for imagefilename in os.listdir(folder2):
       #load image
       image = io.imread(os.path.join(folder2,imagefilename))
@@ -48,10 +48,8 @@ def generateMatrices():
       datarow = np.reshape(image, (1,-1)) # make a 1 x m matrix where m is however many pixels
                                 # there are in the image
       X=np.append(X,datarow,axis=0) #append onto the same matrix
-      Y=np.append(Y,np.array([tmplabel]),axis=0)
+      Y=np.append(Y,tmplabel,axis=0)
       
-    print(np.shape(X))
-    print(np.shape(Y))
     return X,Y
 
 generateMatrices()
