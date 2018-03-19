@@ -2,13 +2,13 @@
 """
 Created on Sat Mar 17 16:26:19 2018
 
-@author: dzhang,adrad
+@author: dzhang
 """
 
 import scipy.io
 import scipy.optimize as optimize
 import numpy as np
-import matrixgenerator
+import matrixgenerator as mg
 
 
 
@@ -22,7 +22,7 @@ def sigmoidgradient(z):
     return g
 
 #Gradient Function
-def NNGradFxn(theta, X,y,lam,n2,n3):
+def NNGradFxn(theta,X,y,lam,n2,n3):
     #Theta1 and Theta2 come in rolled up to be compatible with optimization functions
     #have to unfold them
     
@@ -69,7 +69,7 @@ def NNGradFxn(theta, X,y,lam,n2,n3):
     
 
 # Cost Function
-def NNCostFxn(theta, X, y, lam,n2,n3):
+def NNCostFxn(theta,X,y,lam,n2,n3):
     #Theta1 and Theta2 come in rolled up to be compatible with optimization functions
     #have to unfold them
     
@@ -101,7 +101,6 @@ def NNCostFxn(theta, X, y, lam,n2,n3):
     
     #Update J with Regularization
     J = J + R
-
     return J
     
 '''
@@ -126,7 +125,7 @@ y = np.array(mat['y'], dtype=np.float64)
 n = mat['X'].shape[1]
 m = mat['X'].shape[0]'''
 
-X,y = generateMatrices()
+X,y = mg.generateMatrices()
 X = X.astype(np.float64)
 y = y.astype(np.float64)
 m = X.shape[0]
@@ -134,7 +133,7 @@ n = X.shape[1]
 
 n2 = 100                #number of neurons in hidden layer 
 n3 = 1                  #number of neurons in output layer
-lam = 1
+lam = 0.01
 
 # Initialize random Thetas
 Theta1 = np.random.rand(n2, n+1)*2 -1    #random initialization of Theta1
@@ -146,12 +145,10 @@ Theta2 = np.random.rand(n3, n2+1)*2 -1   #random initialization of Theta2
 #Theta2 = np.ravel(Theta2)
 initial_theta = np.append(np.ravel(Theta1),np.ravel(Theta2))
 
-
 #Get our cost and Gradient out
 tmpJ = NNCostFxn(initial_theta,X,y,lam,n2,n3)
 tmpG = NNGradFxn(initial_theta,X,y,lam,n2,n3)
 print('cost:',tmpJ,'gradients',tmpG)
-
 #Now that we know how to get gradients and costs, run gradient descent and
 
 #optimize our neural net
@@ -162,7 +159,8 @@ opts = {'maxiter' : None,    # default value.
          'disp' : True,    # non-default value.
          'gtol' : 1e-5,    # default value.
          'norm' : np.inf,  # default value.
-         'eps' : 1.4901161193847656e-08}  # default value.
+         'eps' : 1E-10}
+         #'eps' : 1.4901161193847656e-08}  # default value.
 
 '''res2 = optimize.minimize(f, x0, jac=gradf, args=args,
                           method='CG', options=opts)'''
