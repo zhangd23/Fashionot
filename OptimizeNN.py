@@ -72,12 +72,14 @@ def NNGradFxn(theta,X,y,lam,n2,n3):
 def NNCostFxn(theta,X,y,lam,n2,n3):
     #Theta1 and Theta2 come in rolled up to be compatible with optimization functions
     #have to unfold them
+  
     
     m = X.shape[0] #our X data is m rows (examples) by n columns (pixels)
     n = X.shape[1]    
     
     #unpack the thetas
     Theta1 = theta[0:n2*(n+1)]
+    
     Theta2 = theta[n2*(n+1):len(theta)]
     
     #reshape Theta1
@@ -91,9 +93,10 @@ def NNCostFxn(theta,X,y,lam,n2,n3):
     a2 = np.append(np.ones([np.size(a2,0),1]),a2,axis=1)
     z3 = a2.dot(Theta2.T)
     a3 = sigmoid(z3)
-
     #Cost Calculation
-    J = 1/m*(-y.T.dot(np.log(a3))-(1-y).T.dot(np.log(1-a3)))
+    print('a3',max(a3))
+    J = (1/m)*(-y.T.dot(np.log(a3))-(1-y).T.dot(np.log(1-a3)))
+    print('J',J)
     
     #Regularization for cost
     R = lam/(2*m) * sum(sum(np.square(Theta1[0:np.size(Theta1,0), 1:np.size(Theta1,1)]))) \
@@ -133,7 +136,7 @@ n = X.shape[1]
 
 n2 = 100                #number of neurons in hidden layer 
 n3 = 1                  #number of neurons in output layer
-lam = 0.01
+lam = 1
 
 # Initialize random Thetas
 Theta1 = np.random.rand(n2, n+1)*2 -1    #random initialization of Theta1
@@ -170,28 +173,13 @@ opts = {'maxiter' : None,    # default value.
 res2 = optimize.minimize(NNCostFxn, x0=initial_theta, jac=NNGradFxn, args=(X,y,lam,n2,n3),
                           method='CG', options=opts)
 
-'''op.minimize(fun = CostFunc, 
-                                 x0 = initial_theta), 
-                                 args = (X, y),
-                                 method = 'TNC',
-                                 jac = Gradient);'''
 
-
-''' in octave
-% Create "short hand" for the cost function to be minimized
-costFunction = @(p) nnCostFunction(p, ...
-                                   input_layer_size, ...
-                                   hidden_layer_size, ...
-                                   num_labels, X, y, lambda);
-
-% Now, costFunction is a function that takes in only one argument (the
-% neural network parameters)
-[nn_params, cost] = fmincg(costFunction, initial_nn_params, options);
-
-% Obtain Theta1 and Theta2 back from nn_params
-Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
-                 hidden_layer_size, (input_layer_size + 1));
-
-Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
-                 num_labels, (hidden_layer_size + 1));
-'''
+opt_theta = res2.x
+ #unpack the thetas
+tTheta1 = opt_theta[0:n2*(n+1)]
+tTheta2 = opt_theta[n2*(n+1):len(opt_theta)]
+#reshape Theta1
+tTheta1 = tTheta1.reshape((n2,n+1)) #Theta1 is n2 (hidden layer neurons) by n(input pixels)
+#reshape Theta2
+tTheta2 = tTheta2.reshape((n3,n2+1)) #Theta2 is n3 (output columns) by n2 (hidden layer neurons)
+    
