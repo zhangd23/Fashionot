@@ -29,10 +29,13 @@ def generateMatrices():
     for imagefilename in os.listdir(folder1):
       #load image
       image = io.imread(os.path.join(folder1,imagefilename))
-      image = img_as_ubyte(image) #convert to 8bit
+      #convert the data from 0-255 to -1 to 1
+      image = (2/255)*image
+      image = image -1
       #reshape image newshape
       datarow = np.reshape(image, (1,-1)) # make a 1 x m matrix where m is however many pixels
                                 # there are in the image
+    
       X=np.append(X,datarow,axis=0)
       Y=np.append(Y,tmplabel,axis=0)
     
@@ -44,6 +47,9 @@ def generateMatrices():
       #load image
       image = io.imread(os.path.join(folder2,imagefilename))
       image = img_as_ubyte(image) #convert to 8bit
+      image = (2/255)*image
+      image = image -1
+      
       #reshape image newshape
       datarow = np.reshape(image, (1,-1)) # make a 1 x m matrix where m is however many pixels
                                 # there are in the image
