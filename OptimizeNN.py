@@ -95,12 +95,14 @@ def NNCostFxn(theta,X,y,lam,n2,n3):
     a3 = sigmoid(z3)
     #Cost Calculation
     print('a3',max(a3))
-    J = (1/m)*(-y.T.dot(np.log(a3))-(1-y).T.dot(np.log(1-a3)))
+    a3 = np.reshape(a3,-1)
+    y = np.reshape(y,-1)
+    J = (1/m)*((-y.dot(np.log(a3))-(1-y).dot(np.log(1-a3))))
     print('J',J)
     
     #Regularization for cost
-    R = lam/(2*m) * sum(sum(np.square(Theta1[0:np.size(Theta1,0), 1:np.size(Theta1,1)]))) \
-    + sum(sum(np.square(Theta2[0:np.size(Theta2,0), 1:np.size(Theta2,1)])))
+    R = lam/(2*m) *( sum(sum(np.square(Theta1[0:np.size(Theta1,0), 1:np.size(Theta1,1)]))) \
+    + sum(sum(np.square(Theta2[0:np.size(Theta2,0), 1:np.size(Theta2,1)]))))
     
     #Update J with Regularization
     J = J + R
