@@ -1,7 +1,9 @@
-import matplotlib.pyplot as plt
-from skimage import data, color, io, img_as_ubyte
-from skimage.transform import rescale, resize, downscale_local_mean
+
+# Remove unused libraries
+from skimage import io, img_as_ubyte
+from skimage.transform import resize
 import os
+from PIL import Image
 
 # Root directory 
 path = os.path.dirname(os.path.realpath('compress.py'))
@@ -40,4 +42,22 @@ def compress_image(imgpath, savpath):
 compress_image(imgpath1, folder1)
 compress_image(imgpath2, folder2)
 
+# Known Issue: compress_image fails if image is .GIF
+# To Do: Check for GIFs and delete
+
+def mirror_image(imgpath, savpath):
+    #get list of files
+    filelist = os.listdir(imgpath)
+
+    for filename in filelist:
+        image_obj = Image.open(os.path.join(imgpath,filename))
+        mirror_image = image_obj.transpose(Image.FLIP_LEFT_RIGHT)
+        savepath = savpath        
+        new_filename = filename[:-4] + 'm' + filename[6:]            
+        mirror_image.save(os.path.join(savepath,new_filename))
+
+mirror_image(folder1, folder1)
+mirror_image(folder2, folder2)
+
 print ('Done')
+
