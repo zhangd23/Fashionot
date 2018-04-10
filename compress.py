@@ -4,6 +4,7 @@ from skimage import io, img_as_ubyte
 from skimage.transform import resize
 import os
 from PIL import Image
+import random
 
 # Root directory 
 path = os.path.dirname(os.path.realpath('compress.py'))
@@ -19,12 +20,12 @@ if not os.path.exists(folder1):
 if not os.path.exists(folder2):
     os.makedirs(folder2)
     
-#open images in ./images    
+# Open images in ./images    
 imgpath1 = path+r'\images\fashionable'
 imgpath2 = path+r'\images\unfashionable'
 
 
-#compress function
+# Compress function
 def compress_image(imgpath, savpath):
     #get list of files
     filelist = os.listdir(imgpath)
@@ -39,12 +40,7 @@ def compress_image(imgpath, savpath):
         savepath = savpath
         io.imsave(os.path.join(savepath,filename),image_resized)
 
-compress_image(imgpath1, folder1)
-compress_image(imgpath2, folder2)
-
-# Known Issue: compress_image fails if image is .GIF
-# To Do: Check for GIFs and delete
-
+#Mirror function
 def mirror_image(imgpath, savpath):
     #get list of files
     filelist = os.listdir(imgpath)
@@ -56,8 +52,39 @@ def mirror_image(imgpath, savpath):
         new_filename = filename[:-4] + 'm' + filename[6:]            
         mirror_image.save(os.path.join(savepath,new_filename))
 
+# Separate data into Training, Cross-Validation, and Test
+# Create 3 lists that randomly shuffle filenames of data set
+def split_dataset(filepath):
+    filelist = os.listdir(filepath)
+    total_num = len(filelist)
+    train_num = int(round(len(filelist)*.7))
+    xval_num = int(round(len(filelist)*.2))
+    
+    # randomize filelist
+    random.shuffle(filelist)    
+    
+    train_set = filelist[0:train_num]
+    xval_set = filelist[train_num: train_num+xval_num]
+    test_set = filelist[train_num+xval_num: total_num]
+    
+    #return 3 lists that contain filenames of data
+    return train_set, xval_set, test_set
+
+compress_image(imgpath1, folder1)
+compress_image(imgpath2, folder2)
+
+# Known Issue: compress_image fails if image is .GIF
+# To Do: Check for GIFs and delete
+
 mirror_image(folder1, folder1)
 mirror_image(folder2, folder2)
+
+#Fashionable dataset, y = 1
+split_dataset(folder1)
+#Un-fashionable dataset, y = 0
+split_dataset(folder2)
+
+
 
 print ('Done')
 
