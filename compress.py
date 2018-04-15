@@ -4,7 +4,6 @@ from skimage import io, img_as_ubyte
 from skimage.transform import resize
 import os
 from PIL import Image
-import random
 
 # Root directory 
 path = os.path.dirname(os.path.realpath('compress.py'))
@@ -40,7 +39,7 @@ def compress_image(imgpath, savpath):
         savepath = savpath
         io.imsave(os.path.join(savepath,filename),image_resized)
 
-#Mirror function
+# Mirror function
 def mirror_image(imgpath, savpath):
     #get list of files
     filelist = os.listdir(imgpath)
@@ -52,23 +51,22 @@ def mirror_image(imgpath, savpath):
         new_filename = filename[:-4] + 'm' + filename[6:]            
         mirror_image.save(os.path.join(savepath,new_filename))
 
-# Separate data into Training, Cross-Validation, and Test
-# Create 3 lists that randomly shuffle filenames of data set
-def split_dataset(filepath):
-    filelist = os.listdir(filepath)
-    total_num = len(filelist)
-    train_num = int(round(len(filelist)*.7))
-    xval_num = int(round(len(filelist)*.2))
-    
-    # randomize filelist
-    random.shuffle(filelist)    
-    
-    train_set = filelist[0:train_num]
-    xval_set = filelist[train_num: train_num+xval_num]
-    test_set = filelist[train_num+xval_num: total_num]
-    
-    #return 3 lists that contain filenames of data
-    return train_set, xval_set, test_set
+# PNG Images have transparency and thus 4 "colors"
+# Convert all images to JPG
+def convert_jpg(imgpath):
+    #get list of files
+    filelist = os.listdir(imgpath)
+
+    for filename in filelist:
+        image_obj = Image.open(os.path.join(imgpath,filename))
+        noextension = os.path.splitext(os.path.join(imgpath,filename))[0]
+        new_filename = noextension + '.jpg'
+        image_obj.convert('RGB').save(new_filename,'JPEG')                
+        
+    for filename in filelist:   
+        if filename.endswith('.png'):
+            os.remove(os.path.join(imgpath,filename))            
+
 
 compress_image(imgpath1, folder1)
 compress_image(imgpath2, folder2)
@@ -79,11 +77,8 @@ compress_image(imgpath2, folder2)
 mirror_image(folder1, folder1)
 mirror_image(folder2, folder2)
 
-#Fashionable dataset, y = 1
-split_dataset(folder1)
-#Un-fashionable dataset, y = 0
-split_dataset(folder2)
-
+convert_jpg(folder1)
+convert_jpg(folder2)
 
 
 print ('Done')
